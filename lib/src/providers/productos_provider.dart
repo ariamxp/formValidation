@@ -16,7 +16,7 @@ class ProductosProvider {
 
   Future<bool> crearProducto( ProductoModel producto ) async {
 
-    final url = '$_url/productos.json?auth=${_prefs.token}';
+    final url = '$_url/productos.json';
 
     final resp = await http.post( url, body: productoModelToJson(producto) );
 
@@ -39,6 +39,8 @@ class ProductosProvider {
     final List<ProductoModel> productos = new List();
 
     if (decodeData == null) return [];
+
+    if (decodeData['error'] != null) return []; //Validar error al expirar token
 
     decodeData.forEach((id, prod){
       final prodTemp = ProductoModel.fromJson(prod);

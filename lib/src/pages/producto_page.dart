@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:form_validation/src/blocs/provider.dart';
 import 'package:form_validation/src/models/producto_model.dart';
-import 'package:form_validation/src/providers/productos_provider.dart';
 import 'package:form_validation/src/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
@@ -16,14 +16,18 @@ class _ProductoPageState extends State<ProductoPage> {
 
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  ProductosBloc productosBloc;
+
   ProductoModel producto = new ProductoModel();
-  final productoProvider = new ProductosProvider();
   File foto;
 
   bool _guardando = false;
 
   @override
   Widget build(BuildContext context) {
+
+    productosBloc = Provider.productosBloc(context);
 
     final ProductoModel prodData = ModalRoute.of(context).settings.arguments;
     if ( prodData != null ) {
@@ -140,14 +144,14 @@ class _ProductoPageState extends State<ProductoPage> {
     });
 
     if (foto != null) {
-      producto.fotoUrl = await productoProvider.subirImagen(foto);
+      producto.fotoUrl = await productosBloc.subirFoto(foto);
     }
 
     if (producto.id == null) {
-      productoProvider.crearProducto(producto);
+      productosBloc.agregarProductos(producto);
       mostrarSnackbar('Se ha creado un nuevo producto');
     } else {
-      productoProvider.editarProducto(producto);
+      productosBloc.editarProductos(producto);
       mostrarSnackbar('Se actualizado la información del producto');
     }
 

@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:form_validation/src/blocs/provider.dart';
 import 'package:form_validation/src/models/producto_model.dart';
-import 'package:form_validation/src/providers/productos_provider.dart';
 
 class HomePage extends StatelessWidget {
-
-  final productoProvider = new ProductosProvider();
 
   @override
   Widget build(BuildContext context) {
 
-    final bloc = Provider.of(context);
+    final productosBloc = new ProductosBloc();
+    productosBloc.cargarProductos();
     
     return Scaffold(
       appBar: AppBar(title: Text('Home Page'),),
-      body: _crearListado(context),
+      body: _crearListado(productosBloc),
       floatingActionButton: _crearBotonFlotante(context),
     );
   }
@@ -29,17 +27,17 @@ class HomePage extends StatelessWidget {
 
   }
 
-  Widget _crearListado(BuildContext context) {
+  Widget _crearListado(ProductosBloc productosBloc){
 
-    return FutureBuilder(
-      future: productoProvider.cargarProductos(),
-      builder: (BuildContext context, AsyncSnapshot<List<ProductoModel>> snapshot) {
+    return StreamBuilder(
+      stream: productosBloc.productosStream ,
+      builder: (BuildContext context, AsyncSnapshot<List<ProductoModel>> snapshot){
         if (snapshot.hasData) {
 
           final productos = snapshot.data;
           return ListView.builder(
             itemCount: productos.length,
-            itemBuilder: (context, i) => _crearItem(context, productos[i]),
+            itemBuilder: (context, i) => _crearItem(context, productosBloc, productos[i]),
           );
 
         } else {
@@ -50,14 +48,14 @@ class HomePage extends StatelessWidget {
 
   }
 
-  Widget _crearItem( BuildContext context, ProductoModel producto ){
+  Widget _crearItem( BuildContext context, ProductosBloc productosBloc, ProductoModel producto ){
     return Dismissible(
         key: UniqueKey(),
         background: Container(
           color: Colors.red
         ),
         onDismissed: ( direcion ){
-          productoProvider.borrarProducto(producto.id);
+          productosBloc.borrarProductos(producto.id);
         },
         child: Card(
           child: Column(
