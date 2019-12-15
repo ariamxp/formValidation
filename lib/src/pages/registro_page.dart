@@ -3,7 +3,7 @@ import 'package:form_validation/src/blocs/provider.dart';
 import 'package:form_validation/src/providers/usuarios_provider.dart';
 import 'package:form_validation/src/utils/utils.dart';
 
-class LoginPage extends StatelessWidget {
+class RegistroPage extends StatelessWidget {
 
   final userProvider = new UsuarioProvider();
 
@@ -19,7 +19,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  _login(LoginBloc bloc, BuildContext context) async{
+  _registro(LoginBloc bloc, BuildContext context) async{
 
     Map info = await userProvider.loginUsuario(bloc.email, bloc.password);
     if (info['ok']) {
@@ -27,7 +27,7 @@ class LoginPage extends StatelessWidget {
     }else{
       mostrarAlerta(context, info['mensaje']);
     }
-  
+
   }
 
   Widget _crearFondo( BuildContext context ) {
@@ -108,7 +108,7 @@ class LoginPage extends StatelessWidget {
             ),
             child: Column(
               children: <Widget>[
-                Text('Ingreso', style: TextStyle(fontSize: 20.0),),
+                Text('Registro', style: TextStyle(fontSize: 20.0),),
                 SizedBox(height: 40.0,),
                 _crearEmail( bloc ),
                 SizedBox(height: 20.0,),
@@ -119,8 +119,8 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           FlatButton(
-            child: Text('Crear nueva cuenta'),
-            onPressed: ()=> Navigator.pushReplacementNamed(context, 'registro'),
+            child: Text('Ya tengo una cuenta'),
+            onPressed: ()=> Navigator.pushReplacementNamed(context, 'login'),
             ),
           SizedBox( height: 100.0 ,)
         ],
@@ -196,12 +196,11 @@ class LoginPage extends StatelessWidget {
             elevation: 0.0,
             color: Colors.deepPurple,
             textColor: Colors.white,
-          onPressed: snapshot.hasData ? ()=> _login(bloc, context) : null,
+          onPressed: snapshot.hasData ? ()=> _registro(bloc, context) : null,
         );
       },
     );
 
     
   }
- 
 }

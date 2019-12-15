@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:form_validation/src/shared/preferencias_shared.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:form_validation/src/models/producto_model.dart';
@@ -11,10 +12,11 @@ import 'package:mime_type/mime_type.dart';
 class ProductosProvider {
   
   final String _url = 'https://flutter-app-cce78.firebaseio.com';
+  final _prefs = new PreferenciasUsuarios();
 
   Future<bool> crearProducto( ProductoModel producto ) async {
 
-    final url = '$_url/productos.json';
+    final url = '$_url/productos.json?auth=${_prefs.token}';
 
     final resp = await http.post( url, body: productoModelToJson(producto) );
 
@@ -28,8 +30,9 @@ class ProductosProvider {
 
   Future<List<ProductoModel>> cargarProductos() async{
 
+    //final url = '$_url/productos.json?auth=${_prefs.token}';
     final url = '$_url/productos.json';
-
+    
     final resp = await http.get( url );
 
     final Map<String, dynamic> decodeData = json.decode(resp.body);
